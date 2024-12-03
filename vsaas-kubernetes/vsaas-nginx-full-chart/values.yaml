@@ -1,0 +1,84 @@
+# Enable or disable the Ingress Controller deployment
+enable: true
+
+# NGINX Ingress Controller configuration
+ingress:
+  # Number of replicas for the Ingress Controller Deployment
+  replicas: 1
+
+  # NGINX Ingress Controller image configuration
+  image:
+    repository: k8s.gcr.io/ingress-nginx/controller
+    tag: v1.2.0
+    pullPolicy: IfNotPresent
+
+  # NGINX Ingress Controller configuration parameters
+  enableRealIP: "true"
+  useProxyProtocol: "false"
+  proxyReadTimeout: "3600"
+  proxySendTimeout: "3600"
+  clientHeaderTimeout: "3600"
+  clientBodyBufferSize: "1m"
+
+  # Resource requests and limits for the Ingress Controller
+  resources:
+    limits:
+      cpu: 100m
+      memory: 128Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+  # Service configuration for the Ingress Controller
+  service:
+    # Annotations for the Ingress Controller Service
+    annotations:
+      metallb.universe.tf/address-pool: first-pool
+      metallb.universe.tf/allow-shared-ip: "true"
+    # Load Balancer IP address for the Ingress Controller Service
+    loadBalancerIP: "10.3.0.2"
+    # External traffic policy for the Ingress Controller Service
+    externalTrafficPolicy: Local
+    # Service type for the Ingress Controller
+    type: LoadBalancer
+    # Service port configurations
+    ports:
+      http: 80
+      https: 443
+
+  # Extra arguments to pass to the Ingress Controller
+  extraArgs:
+    enable-ssl-passthrough: "true"
+
+  # Liveness probe configuration
+  livenessProbe:
+    port: 10254
+    initialDelaySeconds: 10
+    periodSeconds: 10
+    timeoutSeconds: 1
+    successThreshold: 1
+    failureThreshold: 5
+
+  # Readiness probe configuration
+  readinessProbe:
+    port: 10254
+    initialDelaySeconds: 10
+    periodSeconds: 10
+    timeoutSeconds: 1
+    successThreshold: 1
+    failureThreshold: 3
+
+  # Ingress class resource configuration
+  ingressClassResource:
+    enabled: true
+    default: true
+    controllerName: ""
+
+# RBAC configuration
+rbac:
+  create: true
+
+# Service account configuration
+serviceAccount:
+  create: true
+  name: ""

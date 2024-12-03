@@ -1,0 +1,13 @@
+# templates/NOTES.txt
+Redis has been deployed to your cluster.
+
+To connect to your Redis instance:
+
+1. Redis can be accessed via port {{ .Values.service.port }} on the following DNS name from within your cluster:
+   {{ .Release.Name }}-redis.{{ .Values.namespace }}.svc.cluster.local
+
+2. To get your password run:
+   kubectl get secret --namespace {{ .Values.namespace }} {{ .Release.Name }}-redis -o jsonpath="{.data.redis-password}" | base64 --decode
+
+3. To connect to your Redis server:
+   redis-cli -h {{ .Release.Name }}-redis -p {{ .Values.service.port }} -a $(kubectl get secret --namespace {{ .Values.namespace }} {{ .Release.Name }}-redis -o jsonpath="{.data.redis-password}" | base64 --decode)

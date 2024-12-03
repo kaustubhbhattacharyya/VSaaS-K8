@@ -1,0 +1,130 @@
+# webapp/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: webapp-config
+  namespace: webapp
+data:
+  app.py: |
+    from flask import Flask, jsonify
+    import socket
+    from datetime import datetime
+    
+    app = Flask(__name__)
+    
+    @app.route('/')
+    def home():
+        return jsonify({
+            'message': 'Welcome to Python Web App',
+            'hostname': socket.gethostname(),
+            'time': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+            'status': 'running'
+        })
+    
+    @app.route('/health')
+    def health():
+        return jsonify({'status': 'healthy'})
+    
+    if __name__ == '__main__':
+        app.run(host='0.0.0.0', port=9000, debug=True)
+
+  start.sh: |
+    #!/bin/bash
+    pip install flask
+    python /app/app.py
+
+---
+# webapp/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webapp
+  namespace: webapp
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: webapp
+  template:
+    metadata:
+      labels:
+        app: webapp
+    spec:
+      containers:
+      - name: webapp
+        image: python:3.9-slim
+        command: ["/bin/sh", "/app/start.sh"]
+        ports:
+        - containerPort: 9000
+        volumeMounts:
+        - name: app-config
+          mountPath: /app
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 200m
+            memory: 256Mi
+        # startupProbe:
+        #   httpGet:
+        #     path: /health
+        #     port: 9000
+        #   failureThreshold: 30
+        #   periodSeconds: 10
+        # readinessProbe:
+        #   httpGet:
+        #     path: /health
+        #     port: 9000
+        #   initialDelaySeconds: 20
+        #   periodSeconds: 10
+        # livenessProbe:
+        #   httpGet:
+        #     path: /health
+        #     port: 9000
+        #   initialDelaySeconds: 30
+        #   periodSeconds: 15
+      volumes:
+      - name: app-config
+        configMap:
+          name: webapp-config
+          defaultMode: 0755
+
+---
+# webapp/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: webapp-service
+  namespace: webapp
+spec:
+  selector:
+    app: webapp
+  ports:
+    - protocol: TCP
+      port: 9000
+      targetPort: 9000
+  type: ClusterIP
+
+---
+# webapp/ingress.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: webapp-ingress
+  namespace: webapp
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+spec:
+  ingressClassName: nginx
+  rules:
+  - http:
+      paths:
+      - path: /webapp
+        pathType: Prefix
+        backend:
+          service:
+            name: webapp-service
+            port:
+              number: 9000

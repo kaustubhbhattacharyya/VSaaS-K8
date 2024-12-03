@@ -1,0 +1,99 @@
+# values.yaml
+# Default values for vsaas-rcshandler
+replicaCount: 3
+
+image:
+  repository: vtpl/vrcshandler
+  tag: "1.2.4b"
+  pullPolicy: IfNotPresent
+
+nameOverride: ""
+fullnameOverride: ""
+
+# Node affinity configuration
+nodeAffinity:
+  enabled: true
+  key: "kubernetes.io/hostname"  
+  operator: "In"
+  values:
+    - "masternode.vsaas.com"    
+
+# Container resources
+resources:
+  limits:
+    cpu: 500m
+    memory: 256Mi
+  requests:
+    cpu: 250m
+    memory: 128Mi
+
+# Volume configurations
+volumes:
+  vtplCnf:
+    path: /root/Kubernetes/vsaas_kubernetes_helm/vtpl_cnf
+    mountPath: /root/workfiles/vtpl_cnf
+  logs:
+    path: /root/workfiles/VSaaSMasterServer/logs
+    mountPath: /root/workfiles/VRCSHandler/logs
+  timezone:
+    path: /etc/timezone
+  localtime:
+    path: /etc/localtime
+
+# Service configuration
+service:
+  type: ClusterIP
+  ports:
+    http:
+      port: 11011
+      targetPort: 11011
+      protocol: TCP
+    grpc:
+      port: 11020
+      targetPort: 11020
+      protocol: TCP
+
+# Ingress configuration
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/backend-protocol: "GRPC"
+  host: "rcshandler.videonetics.com"
+
+# ConfigMap data
+configMap:
+  VTPL_RCS_DB_WRITECONCERN: "SAFE"
+  VTPL_RCS_DB_SOCKETTIMEOUT: "15000"
+  VTPL_RCS_DB_DBTYPE: "mongodb_standalone"
+  VTPL_RCS_DB_SCHEMA_AUTH: "admin"
+  VTPL_RCS_DB_USER: "root"
+  VTPL_RCS_DB_POOL_INITIALSIZE: "100"
+  VTPL_RCS_DB_SCHEMA: "rcsdb"
+  VTPL_RCS_DB_READPREFERENCE: "NEAREST"
+  VTPL_RCS_DB_PORT: "27017"
+  VTPL_RCS_DB_POOL_MAXACTIVE: "1000"
+  VTPL_RCS_DB_POOL_MAXWAIT: "10000"
+  VTPL_RCS_DB_CONNECTTIMEOUT: "1000"
+  VTPL_RCS_AGENTID: ""
+  #VTPL_RCS_DB_DOMAIN: "vsaas-mongodb.vsaas-dev.svc.cluster.local"
+  VTPL_RCS_DB_DOMAIN: "10.3.0.3"
+  #VTPL_RCS_DB_DOMAIN: "mongodb.mongodb.svc.cluster.local"
+  VTPL_CENTRAL_PRO_DB_SCHEMA: "centralpro"
+  VTPL_RCS_PVA_DB_SCHEMA: "pvaDB"
+  VTPL_RCS_HMS_DB_SCHEMA: "systemHealthDb"
+  VTPL_RCS_IVMS_DB_SCHEMA: "ivms_30"
+  VTPL_RCS_DAS_DB_SCHEMA: "dasDB"
+  VTPL_INSIGHTS_PRO_DB_SCHEMA: "insights"
+  #MONGO_STANDALONE_HOSTNAME: "vsaas-mongodb.mongodb.svc.cluster.local"
+  MONGO_STANDALONE_HOSTNAME: "10.3.0.3"
+  REDIS_HOSTNAME: "vsaas-redis.vsaas-dev.svc.cluster.local"
+
+# Secret data
+secrets:
+  name: soterix-vsaas-rcshandler-secrets
+  #rcsDbPassword: "cm9vdEBjZW50cmFsMTIzNA=="
+  rcsDbPassword: "root@central1234"

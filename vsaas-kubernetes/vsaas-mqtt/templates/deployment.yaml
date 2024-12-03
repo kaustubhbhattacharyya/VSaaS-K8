@@ -1,0 +1,73 @@
+# templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-mqtt
+  labels:
+    {{- include "vsaas-mqtt.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-mqtt
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-mqtt
+    spec:
+      containers:
+      - name: {{ .Release.Name }}-mqtt-app
+        #image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        image: "rabbitmq:3.8-management"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        ports:
+        - name: http
+          containerPort: 15672
+        - name: amqp
+          containerPort: 5672
+        - name: mqtt
+          containerPort: 1883
+        - name: web-mqtt
+          containerPort: 15675
+        env:
+        - name: RABBITMQ_DEFAULT_USER
+          value: {{ .Values.rabbitmq.username | quote }}
+        - name: RABBITMQ_DEFAULT_PASS
+          value: {{ .Values.rabbitmq.password | quote }}
+        volumeMounts:
+        - name: config
+          mountPath: /etc/rabbitmq/rabbitmq.conf
+          subPath: rabbitmq.conf
+        - name: plugins
+          mountPath: /etc/rabbitmq/enabled_plugins
+          subPath: enabled_plugins
+        - name: data
+          mountPath: /var/lib/rabbitmq
+        command: ["/bin/bash", "-c"]
+        args:
+        - |
+          cp /etc/rabbitmq/rabbitmq.conf /etc/rabbitmq/rabbitmq-custom.conf
+          echo "default_user = {{ .Values.rabbitmq.username }}" >> /etc/rabbitmq/rabbitmq-custom.conf
+          echo "default_pass = {{ .Values.rabbitmq.password }}" >> /etc/rabbitmq/rabbitmq-custom.conf
+          docker-entrypoint.sh rabbitmq-server &
+          sleep 30
+          rabbitmqctl wait --timeout 60 /var/lib/rabbitmq/mnesia/rabbit@$HOSTNAME.pid
+          rabbitmqctl add_user {{ .Values.rabbitmq.adminUsername }} {{ .Values.rabbitmq.adminPassword }} || true
+          rabbitmqctl set_user_tags {{ .Values.rabbitmq.adminUsername }} administrator
+          rabbitmqctl set_permissions -p / {{ .Values.rabbitmq.adminUsername }} ".*" ".*" ".*"
+          tail -f /dev/null
+      volumes:
+      - name: config
+        configMap:
+          name: {{ .Release.Name }}-mqtt-config
+          items:
+          - key: rabbitmq.conf
+            path: rabbitmq.conf
+      - name: plugins
+        configMap:
+          name: {{ .Release.Name }}-mqtt-config
+          items:
+          - key: enabled_plugins
+            path: enabled_plugins
+      - name: data
+        emptyDir: {}

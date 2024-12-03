@@ -1,0 +1,180 @@
+# values.yaml
+replicaCount: 1
+image:
+  repository: nginx
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  type: LoadBalancer
+  port: 80
+  additionalPorts:
+    - port: 81
+      name: secondary
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    kubernetes.io/ingress.class: nginx
+  hosts:
+    - host: soterixcloud.kube.com
+      paths:
+        - path: /v-apiserver
+          pathType: Prefix
+          backend:
+            service:
+              name: master
+              port: 8090
+        - path: /vsaas
+          pathType: Prefix
+          backend:
+            service:
+              name: vsaasweb
+              port: 8041
+        - path: /v-notificationserver
+          pathType: Prefix
+          backend:
+            service:
+              name: eventserver
+              port: 8079
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: vadminportal
+              port: 23000
+        - path: /v2
+          pathType: Prefix
+          backend:
+            service:
+              name: vrtc
+              port: 8083
+        - path: /ui
+          pathType: Prefix
+          backend:
+            service:
+              name: uvicorn
+              port: 58000
+        - path: /api
+          pathType: Prefix
+          backend:
+            service:
+              name: uvicorn
+              port: 58000
+
+configMap:
+  nginx.conf: |
+    user  nginx;
+    worker_processes  auto;
+    error_log  /var/log/nginx/error.log notice;
+    pid        /var/run/nginx.pid;
+    events {
+        worker_connections  1024;
+    }
+    http {
+        include       /etc/nginx/mime.types;
+        default_type  application/octet-stream;
+        log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                         '$status $body_bytes_sent "$http_referer" '
+                         '"$http_user_agent" "$http_x_forwarded_for"';
+        access_log  /var/log/nginx/access.log  main;
+        sendfile        on;
+        server_tokens off;
+        keepalive_timeout  65;
+        include /etc/nginx/conf.d/*.conf;
+        include /etc/nginx/sites-enabled/*;
+    }
+
+  default.conf: |
+    upstream v-configuration {
+       ip_hash;
+       server vadminportal:23000;
+    }
+    upstream v-apiserver {
+       least_conn;
+       server master:8090;
+    }
+    upstream v-surveillance {
+       least_conn;
+       server vsaasweb:8041;
+    }
+    upstream v-notificationserver {
+       ip_hash;
+       server eventserver:8079;
+    }
+    server {
+       listen 80 default_server;
+       listen [::]:80 default_server ipv6only=on;
+       
+       location /v-apiserver/ {
+          proxy_pass http://v-apiserver;
+       }
+       location /vsaas {
+          proxy_pass http://v-surveillance;
+       }
+       location /v-notificationserver/ {
+          proxy_pass http://v-notificationserver;
+          proxy_http_version 1.1;
+          proxy_set_header Upgrade $http_upgrade;
+          proxy_set_header Connection "upgrade";
+       }
+       location / {
+          proxy_pass http://v-configuration/;
+       }
+       location /scrubbing {
+          alias /media/vdata;
+          add_header Cache-Control no-cache;
+       }
+       location ~ /(.+)/v2/stream/(.*)$ {
+          proxy_pass http://$1/v2/stream/$2;
+       }
+       location ~ /(.+)/live/(.*)$ {
+          proxy_pass http://$1/live/$2;
+       }
+    }
+    server {
+       listen 81 default_server;
+       listen [::]:81 default_server ipv6only=on;
+       
+       location /v2/ {
+          proxy_set_header Host $http_host;
+          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+          proxy_set_header X-Forwarded-Proto $scheme;
+          proxy_set_header Upgrade $http_upgrade;
+          proxy_set_header Connection "upgrade";
+          proxy_redirect off;
+          proxy_buffering off;
+          proxy_pass http://vrtc:8083/v2/;
+       }
+       location /ui/ {
+          proxy_set_header Host $http_host;
+          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+          proxy_set_header X-Forwarded-Proto $scheme;
+          proxy_set_header Upgrade $http_upgrade;
+          proxy_set_header Connection "upgrade";
+          proxy_redirect off;
+          proxy_buffering off;
+          proxy_pass http://uvicorn:58000/;
+       }
+       location /api/v2/ {
+          proxy_set_header Host $http_host;
+          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+          proxy_set_header X-Forwarded-Proto $scheme;
+          proxy_set_header Upgrade $http_upgrade;
+          proxy_set_header Connection "upgrade";
+          proxy_redirect off;
+          proxy_buffering off;
+          proxy_pass http://vrtc:8083/v2/;
+       }
+       location /api/ {
+          proxy_set_header Host $http_host;
+          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+          proxy_set_header X-Forwarded-Proto $scheme;
+          proxy_set_header Upgrade $http_upgrade;
+          proxy_set_header Connection "upgrade";
+          proxy_redirect off;
+          proxy_buffering off;
+          proxy_pass http://uvicorn:58000/api/;
+       }
+    }

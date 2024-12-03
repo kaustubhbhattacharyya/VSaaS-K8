@@ -1,0 +1,24 @@
+# templates/pv.yaml
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ include "mongodb.fullname" . }}-pv
+  labels:
+    {{- include "mongodb.labels" . | nindent 4 }}
+spec:
+  capacity:
+    storage: {{ .Values.mongodb.storage.size }}
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: local-storage
+  local:
+    path: {{ .Values.mongodb.storage.path }}
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values:
+          - {{ .Values.mongodb.nodeSelector.hostname }}

@@ -1,0 +1,6 @@
+# Chart.yaml
+apiVersion: v2
+name: vsaas-userportal
+description: A Helm chart for VSaaS User Portal
+version: 0.1.0
+appVersion: "1.2.4b"

@@ -1,0 +1,24 @@
+# templates/ingress-configuration.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.services.configuration.name }}-ingress
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    {{- toYaml .Values.ingress.annotations | nindent 4 }}
+    {{- if hasKey .Values.services.configuration "annotations" }}
+    {{- toYaml .Values.services.configuration.annotations | nindent 4 }}
+    {{- end }}
+spec:
+  ingressClassName: {{ .Values.global.ingressClassName }}
+  rules:
+  - host: {{ .Values.global.domain }}
+    http:
+      paths:
+      - path: {{ .Values.services.configuration.path }}
+        pathType: {{ .Values.services.configuration.pathType }}
+        backend:
+          service:
+            name: {{ .Values.services.configuration.name }}
+            port:
+              number: {{ .Values.services.configuration.port }}

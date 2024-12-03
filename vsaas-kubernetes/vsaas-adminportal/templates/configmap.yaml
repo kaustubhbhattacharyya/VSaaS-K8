@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "vsaas-adminportal.fullname" . }}-config
+  labels:
+    {{- include "vsaas-adminportal.labels" . | nindent 4 }}
+data:
+  NODE_ENV: {{ .Values.configMap.nodeEnv | quote }}
+  BACKEND_SERVICE_HOST: {{ .Values.configMap.backendServiceHost | quote }}
+  BACKEND_SERVICE_PORT: {{ .Values.configMap.backendServicePort | quote }}

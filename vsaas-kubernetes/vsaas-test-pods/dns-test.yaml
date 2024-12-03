@@ -1,0 +1,22 @@
+# test-pod.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: dns-test
+  namespace: vsaas-dev
+spec:
+  dnsPolicy: ClusterFirst
+  dnsConfig:
+    nameservers:
+      - 8.8.8.8
+      - 8.8.4.4
+  containers:
+  - name: net-test
+    image: ubuntu:22.04
+    command: 
+      - bash 
+      - -c 
+      - |
+        echo "nameserver 8.8.8.8" > /etc/resolv.conf
+        echo "nameserver 8.8.4.4" >> /etc/resolv.conf
+        while true; do sleep 30; done

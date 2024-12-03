@@ -1,0 +1,7 @@
+# Chart.yaml
+apiVersion: v2
+name: vsaas-email
+description: A Helm chart for VSaaS Email Service
+type: application
+version: 0.1.0
+appVersion: "1.2.4b"

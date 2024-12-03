@@ -1,0 +1,42 @@
+# ----- START MONGO CONFIGURATIONS -----
+mongo.standalone.hostname=192.168.198.201
+mongo.standalone.port=27017
+#mongo.replica.set=127.0.0.1:27017,127.0.0.1:27017,127.0.0.1:27017,127.0.0.1:27017
+
+mongo.auth.database=admin
+mongo.auth.username=root
+mongo.auth.password=root@central1234
+mongo.database=centralpro
+mongo.minConnectionsPerHost=100
+mongo.connectionsPerHost=100
+mongo.connectTimeout=1000
+mongo.maxWaitTime=1500
+mongo.autoConnectRetry=true
+mongo.socketTimeout=1500
+mongo.threadsAllowedToBlockForConnectionMultiplier=5
+mongo.socketKeepAlive=true
+mongo.fsync=true
+#applicable write concern options for replica set - NONE NORMAL SAFE FSYNC_SAFE JOURNAL_SAFE MAJORITY
+mongo.writeConcern=SAFE
+#applicable read preference options -PRIMARY PRIMARY_PREFERRED SECONDARY SECONDARY_PREFERRED NEAREST
+mongo.readPreference=NEAREST
+# ----- END MONGO CONFIGURATIONS -----
+
+
+# ----- START REDIS CONFIGURATIONS -----
+redis.hostname=10.2.0.6
+redis.portnumber=6379
+
+# ----- START REDIS SENTINEL CONFIGURATIONS -----
+#redis.hostname=127.0.0.1,127.0.0.2,127.0.0.3
+redis.sentinelmaster=redis-cluster
+
+redis.timeout=5000
+redis.password=root
+redis.dbIndex=2
+redis.maxIdle=100
+redis.maxTotal=4000
+redis.minIdle=50
+redis.lock.expireAfter=300000
+redis.testOnBorrow=true
+# ----- END REDIS CONFIGURATIONS -----

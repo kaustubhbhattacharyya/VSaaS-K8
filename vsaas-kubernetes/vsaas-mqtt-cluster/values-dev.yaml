@@ -1,0 +1,74 @@
+# values.yaml
+image:
+  repository: rabbitmq
+  tag: 3.8-management
+  pullPolicy: IfNotPresent
+
+replicaCount: 3
+
+rabbitmq:
+  username: guest
+  password: guest
+  adminUsername: admin
+  adminPassword: admin
+  # Added clustering configuration
+  erlangCookie: "RABBITMQ-CLUSTER-COOKIE"
+  clustering:
+    enabled: true
+    replicaCount: 3
+
+persistence:
+  enabled: true
+  storageClass: ""  # Specify your storage class
+  size: 8Gi
+
+resources:
+  requests:
+    memory: "256Mi"
+    cpu: "250m"
+  limits:
+    memory: "512Mi"
+    cpu: "500m"
+
+# Add readiness/liveness probes
+probes:
+  liveness:
+    enabled: true
+    initialDelaySeconds: 120
+    periodSeconds: 30
+    timeoutSeconds: 20
+    failureThreshold: 6
+    successThreshold: 1
+  readiness:
+    enabled: true
+    initialDelaySeconds: 60
+    periodSeconds: 30
+    timeoutSeconds: 20
+    failureThreshold: 6
+    successThreshold: 1
+
+ingress:
+  enabled: true
+  className: nginx
+  host: soterix-rabbitmq.portal.com
+  path: /
+  pathType: Prefix
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+
+service:
+  type: ClusterIP
+  ports:
+    - name: amqp
+      port: 5672
+      targetPort: 5672
+    - name: http
+      port: 15672
+      targetPort: 15672
+    - name: mqtt
+      port: 1883
+      targetPort: 1883
+    - name: web-mqtt
+      port: 15675
+      targetPort: 15675

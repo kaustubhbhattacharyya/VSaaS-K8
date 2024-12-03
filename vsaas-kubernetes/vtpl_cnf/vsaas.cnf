@@ -1,0 +1,4 @@
+server.servlet.context-path=/vsaas
+server.port=8041
+vtpl.api.server.schemadomainport=http://127.0.0.1:8090
+vtpl.api.server.context=v-apiserver

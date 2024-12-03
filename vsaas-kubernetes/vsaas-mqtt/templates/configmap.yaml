@@ -1,0 +1,10 @@
+# templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-mqtt-config
+data:
+  enabled_plugins: |
+    [rabbitmq_management,rabbitmq_mqtt,rabbitmq_web_mqtt].
+  rabbitmq.conf: |
+    loopback_users.guest = false

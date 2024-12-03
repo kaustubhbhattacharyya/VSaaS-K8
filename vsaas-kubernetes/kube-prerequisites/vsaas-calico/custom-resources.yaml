@@ -1,0 +1,40 @@
+
+apiVersion: operator.tigera.io/v1
+kind: Installation
+metadata:
+  name: default
+spec:
+  
+  calicoNetwork:
+    
+    ipPools:
+    - blockSize: 26
+      cidr: 192.168.0.0/16
+      encapsulation: IPIP
+      natOutgoing: true
+      nodeSelector: all()
+    nodeAddressAutodetectionV4:
+      interface: "^(en|eth|bond).*"
+
+---
+
+apiVersion: projectcalico.org/v3
+kind: BGPConfiguration
+metadata:
+  name: default
+spec:
+  logSeverityScreen: Info
+  nodeToNodeMeshEnabled: true
+  asNumber: 63400
+
+---
+
+apiVersion: projectcalico.org/v3
+kind: FelixConfiguration
+metadata:
+  name: default
+spec:
+  ipv6Support: false
+  logSeverityScreen: Info
+  reportingInterval: 0
+  mtu: 1440

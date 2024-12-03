@@ -1,0 +1,8 @@
+# Chart.yaml
+apiVersion: v2
+name: vsaas-prerequisites
+description: A Helm chart for VSaaS Pre Requisites
+version: 0.1.0
+maintainers:
+  - name: Soterix Systems
+    email: support@soterixsystems.com

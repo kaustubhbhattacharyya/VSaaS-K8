@@ -1,0 +1,325 @@
+<html>
+<head>
+<script type="text/javascript">
+	function setinformation() {
+		var mygetrequest = new ajaxRequest()
+		mygetrequest.onreadystatechange = function() {
+			if (mygetrequest.readyState == 4) {
+				if (mygetrequest.status == 200 || window.location.href.indexOf("http") == -1) {
+				
+					var rtnString = mygetrequest.responseText;
+					json = JSON.parse(rtnString);
+					if (json.returnValue == 0) {
+						
+						document.getElementById("agentId").value = json.agentId;
+						document.getElementById("agentName").value = json.agentName;
+						document.getElementById("privateIp").value = json.privateIp;
+						document.getElementById("publicIp").value = json.publicIp;
+						document.getElementById("agentPort").value = json.agentPort;
+						document.getElementById("stunIp").value = json.stunIp;
+						document.getElementById("stunPort").value = json.stunPort;
+						var clientCapacity = document.getElementById("clientCapacity");
+						if(json.clientCapacity > 0)
+							clientCapacity.value = json.clientCapacity;
+						else
+							clientCapacity.value = -1;
+						
+						var databaseType = document.getElementById("databaseType");
+						if(json.databaseType && json.databaseType != "" && json.databaseType.length > 0) {
+							databaseType.value = json.databaseType;
+							document.getElementById("databaseType").disabled = true;
+							
+						} else {
+							databaseType.value = "";
+							document.getElementById("databaseType").disabled = false;
+							
+						}
+
+						alert(json.returnMsg);
+					} else {
+						alert(json.returnMsg + "\nError Code:" + json.returnValue);
+					}
+				} else {
+					alert("Please reload the page!")
+				}
+			}
+		}
+		
+		var agentIdStr = encodeURIComponent(document.getElementById("agentId").value);
+		var agentNameStr = encodeURIComponent(document.getElementById("agentName").value);
+		var privateIpStr = encodeURIComponent(document.getElementById("privateIp").value);
+		var publicIpStr = encodeURIComponent(document.getElementById("publicIp").value);
+		var agentPortStr = encodeURIComponent(document.getElementById("agentPort").value);
+		var stunIpStr = encodeURIComponent(document.getElementById("stunIp").value);
+		var stunPortStr = encodeURIComponent(document.getElementById("stunPort").value);
+		var clientCapacity = document.getElementById("clientCapacity");
+		var clientCapacityStr = clientCapacity.options[clientCapacity.selectedIndex].value;
+		var databaseType = document.getElementById("databaseType");
+		var databaseTypeStr = databaseType.options[databaseType.selectedIndex].value;
+		
+		if(json.databaseType && json.databaseType != "" && json.databaseType.length > 0) {
+			
+			document.getElementById("databaseType").disabled = true;
+			
+			document.getElementById("agentIdtr").hidden = false;
+			document.getElementById("agentNametr").hidden = false;
+			document.getElementById("privateIptr").hidden = false;
+			document.getElementById("publicIptr").hidden = false;
+			document.getElementById("agentPorttr").hidden = false;
+			document.getElementById("stunIptr").hidden = false;
+			document.getElementById("stunPorttr").hidden = false;
+			document.getElementById("clientCapacitytr").hidden = false;
+		}
+	
+		mygetrequest.open("post", "/saveSettings", true);
+		mygetrequest.send("&agentId=" + agentIdStr + "&agentName=" + agentNameStr
+			+ "&privateIp=" + privateIpStr + "&publicIp=" + publicIpStr
+			+ "&agentPort=" + agentPortStr + "&stunIp=" + stunIpStr + "&stunPort=" + stunPortStr
+			+ "&clientCapacity=" + clientCapacityStr
+			+ "&databaseType=" + databaseTypeStr);
+	}
+
+	var json;
+	function loadSavedData() {
+		var mygetrequest = new ajaxRequest()
+		mygetrequest.onreadystatechange = function() {
+			if (mygetrequest.readyState == 4) {
+				if (mygetrequest.status == 200 || window.location.href.indexOf("http") == -1) {
+					
+					var rtnString = mygetrequest.responseText;
+					
+					json = JSON.parse(rtnString);
+					
+					if (json.returnValue == 0) {
+						
+						document.getElementById("agentId").value = json.agentId;
+						document.getElementById("agentName").value = json.agentName;
+						document.getElementById("privateIp").value = json.privateIp;
+						document.getElementById("publicIp").value = json.publicIp;
+						document.getElementById("agentPort").value = json.agentPort;
+						document.getElementById("stunIp").value = json.stunIp;
+						document.getElementById("stunPort").value = json.stunPort;
+						
+						document.getElementById("databaseDomain").innerHTML = json.databaseDomain;
+						document.getElementById("databasePort").innerHTML = json.databasePort;
+						document.getElementById("databaseSchema").innerHTML = json.databaseSchema;
+						document.getElementById("databaseUser").innerHTML = json.databaseUser;
+						
+						var clientCapacity = document.getElementById("clientCapacity");
+						if(json.clientCapacity > 0)
+							clientCapacity.value = json.clientCapacity;
+						else
+							clientCapacity.value = -1;
+							
+						var databaseType = document.getElementById("databaseType");
+						if(json.handlerConfig) {
+							document.getElementById("configId").innerHTML = "Handler";
+							
+							document.getElementById("agentIdtr").hidden = true;
+							document.getElementById("agentNametr").hidden = true;
+							document.getElementById("privateIptr").hidden = true;
+							document.getElementById("publicIptr").hidden = true;
+							document.getElementById("agentPorttr").hidden = true;
+							document.getElementById("stunIptr").hidden = true;
+							document.getElementById("stunPorttr").hidden = true;
+							document.getElementById("clientCapacitytr").hidden = true;
+						} else {
+							document.getElementById("configId").innerHTML = "Agent";
+						}
+						
+						if(json.databaseType != "" && json.databaseType.length > 0) {
+							databaseType.value = json.databaseType;
+							document.getElementById("databaseType").disabled = true;
+							if(json.handlerConfig) {
+								document.getElementById("saveBtn").hidden = true;
+							}
+						} else {
+							databaseType.value = "";
+							
+							document.getElementById("databaseType").disabled = false;
+							document.getElementById("agentIdtr").hidden = true;
+							document.getElementById("agentNametr").hidden = true;
+							document.getElementById("privateIptr").hidden = true;
+							document.getElementById("publicIptr").hidden = true;
+							document.getElementById("agentPorttr").hidden = true;
+							document.getElementById("stunIptr").hidden = true;
+							document.getElementById("stunPorttr").hidden = true;
+							document.getElementById("clientCapacitytr").hidden = true;
+							
+							document.getElementById("databaseDomaintr").hidden = true;
+							document.getElementById("databasePorttr").hidden = true;
+							document.getElementById("databaseSchematr").hidden = true;
+							document.getElementById("databaseUsertr").hidden = true;
+						}
+						
+					} else {
+						alert(json.returnMsg + "Error Code:" + json.returnValue);
+					}
+				} else {
+					alert("Please reload the page!")
+				}
+			}
+		}
+
+		mygetrequest.open("get", "/loadRCSSettings", true)
+		mygetrequest.send(null);
+	}
+
+	function ajaxRequest() {
+		var activexmodes = [ "Msxml2.XMLHTTP", "Microsoft.XMLHTTP" ] //activeX versions to check for in IE
+		if (window.ActiveXObject) { //Test for support for ActiveXObject in IE first (as XMLHttpRequest in IE7 is broken)
+			for (var i = 0; i < activexmodes.length; i++) {
+				try {
+					return new ActiveXObject(activexmodes[i])
+				} catch (e) {
+					//suppress error
+				}
+			}
+		} else if (window.XMLHttpRequest) // if Mozilla, Safari etc
+			return new XMLHttpRequest()
+		else
+			return false
+	}
+	function validate() {
+		
+		if(json.databaseType && json.databaseType != "" && json.databaseType.length > 0) {
+			if( document.getElementById("agentName").value == "" ) {
+			  alert( "Please provide RCS agent name!" );
+			  document.getElementById("agentName").focus() ;
+			  return false;
+			}
+			
+			if( document.getElementById("privateIp").value == "" ) {
+			  alert( "Please provide RCS agent LAN/private IP!" );
+			  document.getElementById("privateIp").focus() ;
+			  return false;
+			}
+			
+			if( document.getElementById("publicIp").value == document.getElementById("privateIp").value ) {
+			  alert( "Private IP and Public IP can not be same." );
+			  document.getElementById("publicIp").focus() ;
+			  return false;
+			}
+			
+			if( document.getElementById("agentPort").value == "" ) {
+			  alert( "Please provide RCS port!" );
+			  document.getElementById("agentPort").focus() ;
+			  return false;
+			}
+			
+						
+			if( document.getElementById("clientCapacity").value == "-1" ) {
+			  alert( "Please provide client capacity!" );
+			  document.getElementById("clientCapacity").focus() ;
+			  return false;
+			}
+		}
+		
+		if( document.getElementById("databaseType").value == "-1" ) {
+		  alert( "Please provide database type!" );
+		  document.getElementById("databaseType").focus() ;
+		  return false;
+		}
+		
+		 setinformation();
+		
+	}
+</script>
+</head>
+<body onload="javascript:loadSavedData()">
+
+	<table cellpadding="2" width="60%" align="center" cellspacing="2" style="background-color: #99D7FF;">
+		<tr>
+			<td colspan=2>
+				<center>
+					<font size=5><b>Videonetics RCS <span id="configId"></span> Configuration</b></font>
+				</center>
+			</td>
+		</tr>
+		
+		<tr>
+			<td width="50%">Database Type</td>
+			<td width="50%">
+				<select name="databaseType" id="databaseType">
+					<option value="" selected>select..</option>
+					<!-- <option value="mysql">MySql</option> -->
+					<!--<option value="mssql">MsSql</option>-->
+					<option value="mongodb_standalone">Mongo Standalone</option>
+					<option value="mongodb_replicaset">Mongo Replica Set</option>
+				</select>
+			</td>
+		</tr>
+		
+		<tr id="agentIdtr">
+			<td width="50%">Agent Id</td>
+			<td width="50%"><input type=text name="agentId" id="agentId" placeholder="Agent Id" size="20" disabled="disabled"></td>
+		</tr>
+		
+		<tr id="agentNametr">
+			<td width="50%">Agent Name</td>
+			<td width="50%"><input type=text name="agentName" placeholder="Enter Agent Name" id="agentName" size="40"></td>
+		</tr>
+		<tr id="privateIptr">
+			<td>Agent Private/Local IP</td>
+			<td><input type=text name="privateIp" placeholder="Enter Agent LAN or Private IP" id="privateIp" size="40"></td>
+		</tr>
+		<tr id="publicIptr">
+			<td width="50%">Agent Global/Public IP</td>
+			<td width="50%"><input type=text name="publicIp" placeholder="Enter Agent Global or Public IP (optional)" id="publicIp" size="40"></td>
+		</tr>
+		<tr id="agentPorttr">
+			<td width="50%">Agent Port</td>
+			<td width="50%"><input type=text name="agentPort" id="agentPort" placeholder="Enter Agent Port" size="40"></td>
+		</tr>
+		<!-- New addition for STUN server configuration -->
+		<tr id="stunIptr">
+			<td width="50%">STUN Server IP</td>
+			<td width="50%"><input type=text name="stunIp" placeholder="Enter STUN Server IP (optional)" id="stunIp" size="40"></td>
+		</tr>
+		<tr id="stunPorttr">
+			<td width="50%">STUN Server Port</td>
+			<td width="50%"><input type=text name="stunPort" id="stunPort" placeholder="Enter STUN Server Port" size="40"></td>
+		</tr>
+		<tr id="clientCapacitytr">
+			<td width="50%">Client Capacity</td>
+			<td width="50%">
+				<select name="clientCapacity" id="clientCapacity">
+					<option value="-1" selected>select..</option>
+					<option value="32">32</option>
+					<option value="64">64</option>
+					<option value="128">128</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td></td>
+			<td><input type="button" value=" Save "	id="saveBtn" onclick="validate()" /></td>
+		</tr>
+		<tr id="databaseDomaintr">
+			<td width="50%">Database Host</td>
+			<td width="50%">
+				<label id="databaseDomain"> -- Not Set -- </label>
+			</td>
+		</tr>
+		<tr id="databasePorttr">
+			<td width="50%">Database Port</td>
+			<td width="50%">
+				<label id="databasePort"> -- Not Set -- </label>
+			</td>
+		</tr>
+		<tr id="databaseSchematr">
+			<td width="50%">Database Schema</td>
+			<td width="50%">
+				<label id="databaseSchema"> -- Not Set -- </label>
+			</td>
+		</tr>
+		<tr id="databaseUsertr">
+			<td width="50%">Database User</td>
+			<td width="50%">
+				<label id="databaseUser"> -- Not Set -- </label>
+			</td>
+		</tr>
+	</table>
+
+</body>
+</html>

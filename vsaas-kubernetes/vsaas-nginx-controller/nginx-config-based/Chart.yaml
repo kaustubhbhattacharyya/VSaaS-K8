@@ -1,0 +1,6 @@
+# Chart.yaml
+apiVersion: v2
+name: nginx-proxy
+description: A Helm chart for Nginx proxy with multiple backend services
+version: 0.1.0
+type: application

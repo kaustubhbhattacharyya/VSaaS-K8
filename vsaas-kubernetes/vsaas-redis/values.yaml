@@ -1,0 +1,17 @@
+namespace: vsaas-dev
+createNamespace: false
+
+redis:
+  image: redis
+  replicas: 3
+  password: root
+  storage:
+    size: 1Gi
+    storageClassName: standard-wait-consumer
+    hostPath: /mnt/data
+  nodeSelector:
+    hostname: workernode2.vsaas.com
+
+service:
+  port: 6379
+  targetPort: 6379

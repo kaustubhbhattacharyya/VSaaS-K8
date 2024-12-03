@@ -1,0 +1,16 @@
+# helmfile.yaml
+repositories:
+  - name: metallb
+    url: https://metallb.github.io/metallb
+
+releases:
+  - name: metallb
+    namespace: vsaas-metallb
+    chart: metallb/metallb
+    version: 0.13.12
+    createNamespace: true
+    hooks:
+      - events: ["presync"]
+        showlogs: true
+        command: "kubectl"
+        args: ["delete", "crd", "addresspools.metallb.io", "bfdprofiles.metallb.io", "bgppeers.metallb.io", "bgpadvertisements.metallb.io", "ipaddresspools.metallb.io", "l2advertisements.metallb.io", "communities.metallb.io", "--ignore-not-found=true"]

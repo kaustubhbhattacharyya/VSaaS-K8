@@ -1,0 +1,112 @@
+# values.yaml
+global:
+  domain: soterixcloud-dev.kube.com
+  environment: dev
+  ingressClassName: nginx
+
+services:
+  configuration:
+    name: v-configuration
+    port: 23000
+    path: /v-configuration
+    pathType: Prefix
+    annotations:
+      nginx.ingress.kubernetes.io/rewrite-target: /
+      nginx.ingress.kubernetes.io/proxy-body-size: "200m"
+
+  adminportal:
+    name: vsaas-adminportal-service
+    port: 3010
+    path: /
+    pathType: Prefix
+    annotations:
+      nginx.ingress.kubernetes.io/rewrite-target: /
+      nginx.ingress.kubernetes.io/proxy-body-size: "200m"
+      nginx.ingress.kubernetes.io/websocket-services: "true"
+
+  userportal:
+    name: vsaas-adminportal-service-test
+    port: 23000
+    path: /
+    pathType: Prefix
+    annotations:
+      nginx.ingress.kubernetes.io/rewrite-target: /
+      nginx.ingress.kubernetes.io/proxy-body-size: "200m"
+      nginx.ingress.kubernetes.io/websocket-services: "true"
+
+  apiserver:
+    name: master
+    port: 8090
+    path: /v-apiserver
+    pathType: Prefix
+    annotations:
+      nginx.ingress.kubernetes.io/rewrite-target: /$2
+      nginx.ingress.kubernetes.io/proxy-body-size: "200m"
+      nginx.ingress.kubernetes.io/websocket-services: "true"
+
+  surveillance:
+    name: vsaasweb
+    port: 8041
+    path: /vsaas
+    pathType: Prefix
+    annotations:
+      nginx.ingress.kubernetes.io/rewrite-target: /$2
+      nginx.ingress.kubernetes.io/proxy-body-size: "200m"
+      nginx.ingress.kubernetes.io/websocket-services: "true"
+
+  notification:
+    name: eventserver
+    port: 8079
+    path: /v-notificationserver
+    pathType: Prefix
+    annotations:
+      nginx.ingress.kubernetes.io/rewrite-target: /$2
+      nginx.ingress.kubernetes.io/websocket-services: "true"
+      nginx.ingress.kubernetes.io/proxy-http-version: "1.1"
+
+  remoteevent:
+    name: remoteeventserver
+    port: 15675
+    path: /ws
+    pathType: Prefix
+    annotations:
+      nginx.ingress.kubernetes.io/rewrite-target: /ws
+      nginx.ingress.kubernetes.io/websocket-services: "true"
+      nginx.ingress.kubernetes.io/proxy-http-version: "1.1"
+      nginx.ingress.kubernetes.io/proxy-connect-timeout: "1"
+      nginx.ingress.kubernetes.io/upstream-hash-by: "$remote_addr"
+
+  # For dynamic proxy paths
+  stream:
+    enabled: true
+    path: "/(.+)/v2/stream/(.*)"
+    pathType: ImplementationSpecific
+    annotations:
+      nginx.ingress.kubernetes.io/rewrite-target: /$1/v2/stream/$2
+      nginx.ingress.kubernetes.io/websocket-services: "true"
+
+  live:
+    enabled: true
+    path: "/(.+)/live/(.*)"
+    pathType: ImplementationSpecific
+    annotations:
+      nginx.ingress.kubernetes.io/rewrite-target: /$1/live/$2
+
+ingress:
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "200m"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
+    nginx.ingress.kubernetes.io/proxy-http-version: "1.1"
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      proxy_set_header X-Real-IP $remote_addr;
+      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+      proxy_set_header X-Forwarded-Proto $scheme;
+      proxy_set_header Host $http_host;
+
+  websocket:
+    annotations:
+      nginx.ingress.kubernetes.io/proxy-http-version: "1.1"
+      nginx.ingress.kubernetes.io/configuration-snippet: |
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";

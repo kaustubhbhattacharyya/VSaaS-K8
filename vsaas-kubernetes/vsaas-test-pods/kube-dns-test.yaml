@@ -1,0 +1,11 @@
+# dns-test.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: dns-test
+  namespace: vsaas-dev
+spec:
+  containers:
+  - name: dns-test
+    image: nicolaka/netshoot
+    command: ['sh', '-c', 'while true; do sleep 30; done']

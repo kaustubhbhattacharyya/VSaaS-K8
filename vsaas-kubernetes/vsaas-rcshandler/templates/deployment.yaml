@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "vsaas-rcshandler.fullname" . }}
+  labels:
+    {{- include "vsaas-rcshandler.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "vsaas-rcshandler.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "vsaas-rcshandler.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- if .Values.nodeAffinity.enabled }}
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: {{ .Values.nodeAffinity.key }}
+                    operator: {{ .Values.nodeAffinity.operator }}
+                    values:
+                    {{- range .Values.nodeAffinity.values }}
+                    - {{ . }}
+                    {{- end }}
+      {{- end }}
+      tolerations:
+        - key: "node-role.kubernetes.io/control-plane"
+          operator: "Exists"
+          effect: "NoSchedule"
+      containers:
+        - name: {{ .Chart.Name }}-app
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.service.ports.http.port }}
+            - containerPort: {{ .Values.service.ports.grpc.port }}
+          envFrom:
+            - configMapRef:
+                name: {{ include "vsaas-rcshandler.fullname" . }}-config
+          env:
+            - name: VTPL_RCS_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secrets.name }}
+                  key: rcs-db-password
+          volumeMounts:
+            - name: vtpl-cnf-volume
+              mountPath: {{ .Values.volumes.vtplCnf.mountPath }}
+            - name: logs-volume
+              mountPath: {{ .Values.volumes.logs.mountPath }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      volumes:
+        - name: vtpl-cnf-volume
+          hostPath:
+            path: {{ .Values.volumes.vtplCnf.path }}
+        - name: logs-volume
+          hostPath:
+            path: {{ .Values.volumes.logs.path }}
+        - name: timezone-volume
+          hostPath:
+            path: {{ .Values.volumes.timezone.path }}
+        - name: localtime-volume
+          hostPath:
+            path: {{ .Values.volumes.localtime.path }}

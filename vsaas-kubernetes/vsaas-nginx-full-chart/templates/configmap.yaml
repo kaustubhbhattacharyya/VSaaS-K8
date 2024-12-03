@@ -1,0 +1,17 @@
+{{- if .Values.enable }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-vsaas-nginx
+  labels:
+    app.kubernetes.io/name: vsaas-nginx
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: Helm
+data:
+  enable-real-ip: "{{ .Values.ingress.enableRealIP }}"
+  use-proxy-protocol: "{{ .Values.ingress.useProxyProtocol }}"
+  proxy-read-timeout: "{{ .Values.ingress.proxyReadTimeout }}"
+  proxy-send-timeout: "{{ .Values.ingress.proxySendTimeout }}"
+  client-header-timeout: "{{ .Values.ingress.clientHeaderTimeout }}"
+  client-body-buffer-size: "{{ .Values.ingress.clientBodyBufferSize }}"
+{{- end }}

@@ -1,0 +1,14 @@
+# templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-mqtt
+spec:
+  selector:
+    app: {{ .Release.Name }}-mqtt
+  ports:
+  {{- range .Values.service.ports }}
+  - port: {{ .port }}
+    targetPort: {{ .targetPort }}
+    name: {{ .name }}
+  {{- end }}

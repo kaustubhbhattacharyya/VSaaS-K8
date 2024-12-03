@@ -1,0 +1,20 @@
+# templates/ingress-adminportal.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Release.Name }}-adminportal
+  annotations:
+    {{- toYaml .Values.ingress.annotations | nindent 4 }}
+spec:
+  ingressClassName: {{ .Values.global.ingressClassName }}
+  rules:
+    - host: {{ .Values.global.domain }}
+      http:
+        paths:
+          - path: {{ .Values.services.adminportal.path }}
+            pathType: {{ .Values.services.adminportal.pathType }}
+            backend:
+              service:
+                name: {{ .Values.services.adminportal.name }}
+                port:
+                  number: {{ .Values.services.adminportal.port }}

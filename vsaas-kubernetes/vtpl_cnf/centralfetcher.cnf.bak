@@ -1,0 +1,5 @@
+
+data.site.ids=1,2
+data.central.storages=/media/vdata
+data.retention.days.central.event=90
+

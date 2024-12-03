@@ -1,0 +1,50 @@
+architecture: standalone
+
+image:
+  registry: docker.io
+  repository: bitnami/mongodb
+  tag: 5.0.15-debian-11-r3
+  pullPolicy: IfNotPresent
+
+auth:
+  enabled: true
+  rootUser: root
+  rootPassword: "root@central1234"
+
+persistence:
+  enabled: true
+  storageClass: "mongodb-local-storage"
+  size: 8Gi
+  annotations: {}
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 250m
+    memory: 256Mi
+
+service:
+  type: ClusterIP
+  port: 27017
+  name: mongodb
+
+nodeSelector:
+  kubernetes.io/hostname: workernode2.vsaas.com
+
+tolerations:
+- key: "node-role.kubernetes.io/control-plane"
+  operator: "Exists"
+  effect: "NoSchedule"
+
+volumePermissions:
+  enabled: true
+
+podSecurityContext:
+  enabled: true
+  fsGroup: 1001
+
+containerSecurityContext:
+  enabled: true
+  runAsUser: 1001

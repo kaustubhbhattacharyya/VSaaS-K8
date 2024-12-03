@@ -1,0 +1,24 @@
+# templates/ingress-surveillance.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.services.surveillance.name }}-ingress
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    {{- toYaml .Values.ingress.annotations | nindent 4 }}
+    {{- if hasKey .Values.services.surveillance "annotations" }}
+    {{- toYaml .Values.services.surveillance.annotations | nindent 4 }}
+    {{- end }}
+spec:
+  ingressClassName: {{ .Values.global.ingressClassName }}
+  rules:
+  - host: {{ .Values.global.domain }}
+    http:
+      paths:
+      - path: {{ .Values.services.surveillance.path }}
+        pathType: {{ .Values.services.surveillance.pathType }}
+        backend:
+          service:
+            name: {{ .Values.services.surveillance.name }}
+            port:
+              number: {{ .Values.services.surveillance.port }}

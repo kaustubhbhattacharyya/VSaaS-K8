@@ -1,0 +1,6 @@
+# Chart.yaml
+apiVersion: v2
+name: vsaas-mqtt
+description: A Helm chart for VSAAS MQTT RabbitMQ deployment
+version: 0.1.0
+type: application

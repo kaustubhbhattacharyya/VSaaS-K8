@@ -1,0 +1,30 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "vsaas-rcshandler.fullname" . }}-ingress
+  labels:
+    {{- include "vsaas-rcshandler.labels" . | nindent 4 }}
+  {{- with .Values.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  ingressClassName: {{ .Values.ingress.className }}
+  rules:
+    - host: {{ .Values.ingress.host }}
+      http:
+        paths:
+          - path: /http
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "vsaas-rcshandler.fullname" . }}-svc
+                port:
+                  number: {{ .Values.service.ports.http.port }}
+          - path: /grpc
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "vsaas-rcshandler.fullname" . }}-svc
+                port:
+                  number: {{ .Values.service.ports.grpc.port }}

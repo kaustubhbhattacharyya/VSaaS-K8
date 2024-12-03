@@ -1,0 +1,63 @@
+{{- if .Values.enable }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-vsaas-nginx
+  labels:
+    app.kubernetes.io/name: vsaas-nginx
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: Helm
+spec:
+  replicas: {{ .Values.ingress.replicas }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: vsaas-nginx
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: vsaas-nginx
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: vsaas-nginx
+          image: "{{ .Values.ingress.image.repository }}:{{ .Values.ingress.image.tag }}"
+          imagePullPolicy: {{ .Values.ingress.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+            - name: https
+              containerPort: 443
+              protocol: TCP
+          args:
+            - /nginx-ingress-controller
+            - --publish-service=default/{{ .Release.Name }}-vsaas-nginx
+            - --election-id=ingress-nginx-leader
+            - --controller-class=nginx
+            - --ingress-class=nginx
+            - --configmap=default/{{ .Release.Name }}-vsaas-nginx
+            - --enable-ssl-passthrough=true
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 10254
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 1
+            successThreshold: 1
+            failureThreshold: 5
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 10254
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 1
+            successThreshold: 1
+            failureThreshold: 3
+          resources:
+            {{ toYaml .Values.ingress.resources | nindent 12 }}
+{{- end }}

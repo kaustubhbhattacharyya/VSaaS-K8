@@ -1,0 +1,12 @@
+# nginx-controller/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ingress-nginx
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "nginx.labels" . | nindent 4 }}
+data:
+  {{- range $key, $value := .Values.controller.config }}
+  {{ $key }}: {{ $value | quote }}
+  {{- end }}
