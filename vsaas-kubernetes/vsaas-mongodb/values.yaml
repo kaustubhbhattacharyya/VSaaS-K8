@@ -1,0 +1,32 @@
+nameOverride: "vsaas-mongodb"
+fullnameOverride: "vsaas-mongodb"
+
+namespace: vsaas-dev
+
+mongodb:
+  image: mongo:5.0.22
+  imagePullPolicy: Always
+  storage:
+    size: 10Gi
+    path: /data/mongodb
+  auth:
+    username: root
+    password: root@central1234
+  nodeSelector:
+    hostname: workernode3.vsaas.com
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "1Gi"
+    limits:
+      cpu: "2000m"
+      memory: "2Gi"
+
+service:
+  port: 27017
+  targetPort: 27017
+  nodePort: 30017
+
+vmongo:
+  sourcePath: "./VMongo"
+  targetPath: "/data/vmongo"

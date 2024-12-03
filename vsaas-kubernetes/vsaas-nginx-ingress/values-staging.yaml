@@ -1,0 +1,10 @@
+# nginx-controller/values-staging.yaml
+# controller:
+#   replicaCount: 2
+#   resources:
+#     requests:
+#       cpu: 200m
+#       memory: 128Mi
+#     limits:
+#       cpu: 1000m
+#       memory: 1Gi

@@ -1,0 +1,29 @@
+# templates/ingress-rtc.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Release.Name }}-rtc
+  annotations:
+    {{- toYaml .Values.ingress.annotations | nindent 4 }}
+spec:
+  ingressClassName: {{ .Values.global.ingressClassName }}
+  rules:
+    - host: {{ .Values.global.domain }}
+      http:
+        paths:
+          - path: {{ .Values.services.rtc.path }}
+            pathType: {{ .Values.services.rtc.pathType }}
+            backend:
+              service:
+                name: {{ .Values.services.rtc.name }}
+                port:
+                  number: {{ .Values.services.rtc.port }}
+          {{- range .Values.services.rtc.additionalPaths }}
+          - path: {{ .path }}
+            pathType: {{ .pathType }}
+            backend:
+              service:
+                name: {{ $.Values.services.rtc.name }}
+                port:
+                  number: {{ $.Values.services.rtc.port }}
+          {{- end }}

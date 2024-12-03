@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-conf
+  namespace: test
+data:
+  default.conf: |
+    server {
+        listen 23050;
+        server_name localhost;
+        
+        location / {
+            default_type text/plain;
+            return 200 'Hello from Test App..................!\n';
+            add_header 'Access-Control-Allow-Origin' '*';
+            add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS';
+        }
+        
+        location /health {
+            access_log off;
+            return 200 'healthy\n';
+        }
+
+        # Add this error log for debugging
+        error_log  /var/log/nginx/error.log  debug;
+        access_log /var/log/nginx/access.log combined;
+    }

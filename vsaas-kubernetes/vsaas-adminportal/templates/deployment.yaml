@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "vsaas-adminportal.fullname" . }}
+  labels:
+    {{- include "vsaas-adminportal.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "vsaas-adminportal.name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "vsaas-adminportal.name" . }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.service.targetPort }}
+              protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: {{ include "vsaas-adminportal.fullname" . }}-config
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: log-volume
+              mountPath: /var/log/vsaas-adminportal
+      volumes:
+        - name: log-volume
+          emptyDir: {}

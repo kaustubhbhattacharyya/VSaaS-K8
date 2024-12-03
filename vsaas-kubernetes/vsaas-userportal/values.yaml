@@ -1,0 +1,42 @@
+# values.yaml
+nameOverride: "vsaas-userportal"
+fullnameOverride: "vsaas-userportal"
+
+namespace:
+  name: vsaas-dev
+
+deployment:
+  replicas: 3
+  image:
+    repository: vtpl/vsaasclientportal
+    tag: 1.2.4b
+    pullPolicy: IfNotPresent
+  containerPort: 3010
+  volumeMounts:
+    mountPath: /usr/src/app
+  hostPath:
+    path: /path/to/your/local/VSaaSUserWeb
+
+service:
+  type: ClusterIP
+  port: 3010
+  targetPort: 3010
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/rewrite-target: /
+  host: soterix.userportal.com
+
+configMap:
+  namespace: vsaas-dev
+  data:
+    NODE_ENV: "production"
+    HTTP_SERVER_IP: "vsaas-api-api.vsaas-dev.svc.cluster.local"
+    HTTP_SERVER_PORT: "8090"
+    API_SERVER_IP: "vsaas-api-api.vsaas-dev.svc.cluster.local"
+    API_SERVER_PORT: "8090"
+    NEXT_PUBLIC_RECAPTCHA_SITE_KEY: "6LcVw_IpAAAAAGY1PiexrhQBl2r6obkrxcNaHx7K"
+    NEXT_PUBLIC_SOTERIX_HOME: "http://vsaas-api-api.vsaas-dev.svc.cluster.local:8090"

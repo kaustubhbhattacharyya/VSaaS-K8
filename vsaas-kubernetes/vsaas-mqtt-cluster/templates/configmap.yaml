@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-mqtt-config
+data:
+  enabled_plugins: |
+    [rabbitmq_management,rabbitmq_mqtt,rabbitmq_web_mqtt,rabbitmq_peer_discovery_k8s].
+  rabbitmq.conf: |
+    loopback_users.guest = false
+    cluster_formation.peer_discovery_backend = rabbit_peer_discovery_k8s
+    cluster_formation.k8s.host = kubernetes.default.svc.cluster.local
+    cluster_formation.k8s.address_type = hostname
+    cluster_formation.k8s.service_name = {{ .Release.Name }}-mqtt
+    cluster_formation.k8s.hostname_suffix = .{{ .Release.Name }}-mqtt.{{ .Release.Namespace }}.svc.cluster.local
+    cluster_partition_handling = autoheal

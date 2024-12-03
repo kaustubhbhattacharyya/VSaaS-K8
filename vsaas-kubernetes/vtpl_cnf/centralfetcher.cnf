@@ -1,0 +1,7 @@
+#Auto Id add
+#Wed Dec 13 11:21:17 IST 2023
+data.tagged.record.fetcher.ip=172.16.1.121
+data.site.ids=1,2
+data.retention.days.central.event=90
+data.tagged.record.fetcher.id=ef07fa6f-27de-400a-bf2c-0091cdc2b10c
+data.central.storages=/media/vdata

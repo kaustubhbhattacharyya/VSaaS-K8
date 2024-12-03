@@ -1,0 +1,14 @@
+{{- if .Values.enable }}
+apiVersion: networking.k8s.io/v1
+kind: IngressClass
+metadata:
+  name: nginx
+  labels:
+    app.kubernetes.io/name: vsaas-nginx
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    ingressclass.kubernetes.io/is-default-class: "true"
+spec:
+  controller: nginx/ingress-controller
+{{- end }}

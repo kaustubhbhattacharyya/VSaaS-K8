@@ -1,0 +1,11 @@
+# network-test.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: net-test
+  namespace: vsaas-dev
+spec:
+  containers:
+  - name: net-test
+    image: nicolaka/netshoot
+    command: ['sh', '-c', 'while true; do sleep 30; done']

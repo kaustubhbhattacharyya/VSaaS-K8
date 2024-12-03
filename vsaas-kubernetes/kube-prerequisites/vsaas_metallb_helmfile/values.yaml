@@ -1,0 +1,23 @@
+# values.yaml
+controller:
+  logLevel: info
+  resources:
+    limits:
+      cpu: 100m
+      memory: 100Mi
+
+speaker:
+  logLevel: info
+  resources:
+    limits:
+      cpu: 100m
+      memory: 100Mi
+
+crds:
+  enabled: true
+
+prometheus:
+  serviceMonitor:
+    enabled: false
+  prometheusRule:
+    enabled: false

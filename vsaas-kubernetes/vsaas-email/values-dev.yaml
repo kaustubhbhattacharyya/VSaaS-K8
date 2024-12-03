@@ -1,0 +1,77 @@
+replicaCount: 3
+
+image:
+  repository: vtpl/vemailservices
+  tag: "1.2.4b"
+  pullPolicy: IfNotPresent
+
+service:
+  port: 8095
+  targetPort: 8095
+
+resources:
+  requests:
+    memory: "512Mi"
+    cpu: "250m"
+  limits:
+    memory: "1Gi"
+    cpu: "500m"
+
+
+probes:
+  enabled: false
+  liveness:
+    path: /v-mail-sms/actuator/health
+    port: 8095
+    initialDelaySeconds: 60
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 3
+  readiness:
+    path: /v-mail-sms/actuator/health
+    port: 8095
+    initialDelaySeconds: 30
+    periodSeconds: 10
+
+
+mongodb:
+  auth:
+    username: "root"
+    password: "root@central1234"
+
+
+javaOpts: "-Xms256m -Xmx512m -Djava.security.egd=file:/dev/./urandom"
+
+
+configMapData:
+  VTPL_WEB_SERVER_CONTEXT: "v-mail-sms"
+  VTPL_WEB_APP_NAME: "V-SaaS-Mail-SMS-Sender"
+  SERVER_PORT: "8095"
+  MONGO_AUTH_USERNAME: "root"
+  
+  MONGO_STANDALONE_HOSTNAME: "10.3.0.3"
+  MONGO_STANDALONE_PORT: "27017"
+  MONGO_AUTH_DATABASE: "admin"
+  MONGO_DATABASE: "centralpro"
+  MONGO_MINCONNECTIONSPERHOST: "100"
+  MONGO_CONNECTIONSPERHOST: "100"
+  MONGO_CONNECTTIMEOUT: "1000"
+  MONGO_MAXWAITTIME: "1500"
+  MONGO_AUTOCONNECTRETRY: "true"
+  MONGO_SOCKETTIMEOUT: "1500"
+  MONGO_THREADSALLOWEDTOBLOCKFORCONNECTIONMULTIPLIER: "5"
+  MONGO_SOCKETKEEPALIVE: "true"
+  MONGO_FSYNC: "true"
+  MONGO_WRITECONCERN: "SAFE"
+  MONGO_READPREFERENCE: "NEAREST"
+  MAIL_REDIRECT_URL: "https://demo.soterixcloud.com"
+  MAIL_DEFAULT_LOGO: "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAP//////////////////////////////////////////////////////////////////////////////////////wgALCAABAAEBAREA/8QAFBABAAAAAAAAAAAAAAAAAAAAAP/aAAgBAQABPxA="
+  MAIL_ENTERPRISE_REGISTRATION_SUBJECT: "Welcome To VSaaS"
+  MAIL_ENTERPRISE_REGISTRATION_BODY: "<!DOCTYPE html><html lang='en'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>Welcome to Our Platform</title><style>body{ font-family: Arial, sans-serif; line-height: 1.6; margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh;} .container{ max-width: 600px; padding: 20px; border: 1px solid 
+  MAIL_ENTERPRISE_REGISTRATION_SUBJECT: "<!DOCTYPE html><html lang='en'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>Welcome to Our Platform</title><style>body{ font-family: Arial, sans-serif; line-height: 1.6; margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh;} .container{ max-width: 600px; padding: 20px; border: 1px solid 
+  MAIL_PASSWORDCHANGE_SUBJECT: "Password Changed Successfully"
+  MAIL_PASSWORDCHANGE_BODY: "<!DOCTYPE html><html lang='en'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>Password Change Notification</title><style>body{ font-family: Arial, sans-serif; line-height: 1.6; margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh;} .container{ max-width: 600px; padding: 20px; border: 1px solid 
+  MAIL_SHARE_CLIP_SUBJECT: "Shared Clip"
+  MAIL_SHARE_CLIP_BODY: "<!DOCTYPE html><html lang='en'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>Share Link</title><style>body{ font-family: Arial, sans-serif; line-height: 1.6; margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh;} .container{ max-width: 600px; padding: 20px; border: 1px solid 
+  MAIL_PASSWORD_RESET_LINK_SUBJECT: "Password Reset Link"
+  MAIL_PASSWORD_RESET_LINK_BODY: "<!DOCTYPE html><html lang='en'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>Reset Password</title><style>body{ font-family: Arial, sans-serif; line-height: 1.6; margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh;} .container{ max-width: 600px; padding: 20px; border: 1px solid 

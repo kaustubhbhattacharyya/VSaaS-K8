@@ -1,0 +1,5 @@
+apiVersion: v2
+name: vsaas-api
+description: A Helm chart for VSaaS API deployment
+version: 0.1.0
+appVersion: "1.2.4b"

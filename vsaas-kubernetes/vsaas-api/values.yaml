@@ -1,0 +1,75 @@
+replicaCount: 3
+namespace: vsaas-dev
+
+image:
+  repository: vtpl/vsaasmasterserver
+  tag: "1.2.4b"
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 8090
+  targetPort: 8090
+
+ingress:
+  enabled: true
+  host: "vsaas.cloud.com"
+  path: "/v-apiserver(/|$)(.*)"
+  pathType: ImplementationSpecific
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
+    nginx.ingress.kubernetes.io/connection-proxy-header: "keep-alive"
+
+mongodb:
+  #hostname: "vsaas-mongodb.vsaas-dev.svc.cluster.local"
+  hostname: "10.3.0.3"
+  port: "27017"
+  database: "centralpro"
+  authDatabase: "admin"
+  username: "root"
+  minConnectionsPerHost: "100"
+  connectionsPerHost: "100"
+  connectTimeout: "1000"
+  maxWaitTime: "1500"
+  autoConnectRetry: "true"
+  socketTimeout: "1500"
+  threadsAllowedToBlockForConnectionMultiplier: "5"
+  socketKeepAlive: "true"
+  fsync: "true"
+  writeConcern: "SAFE"
+  readPreference: "NEAREST"
+
+redis:
+  hostname: "vsaas-redis.vsaas-dev.svc.cluster.local"
+  port: "6379"
+  sentinelMaster: "redis-cluster"
+  timeout: "5000"
+  dbIndex: "2"
+  maxIdle: "100"
+  maxTotal: "4000"
+  minIdle: "50"
+  lockExpireAfter: "300000"
+  testOnBorrow: "true"
+  sessionTimeoutMinutes: "30"
+
+webServer:
+  tsApiServerIp: "127.0.0.1"
+  tsApiServerPort: "3002"
+  storageBaseDir: "/media/vdata"
+  streamRequestRedirectToVms: "true"
+  rcsHandlerAddress: "vsaas-rcshandler-svc.vsaas-dev.svc.cluster.local"
+  context: "v-apiserver"
+  appName: "V-Connect-MasterServer"
+  port: "8090"
+
+secrets:
+  #mongoAuthPassword: "cm9vdEBjZW50cmFsMTIzNA=="
+  mongoAuthPassword: "root@central1234"
+  redisPassword: "cm9vdA=="
+  #rcsDbPassword: "cm9vdEBjZW50cmFsMTIzNA=="
+  rcsDbPassword: "root@central1234"
+  mailSenderPassword: "dmlkZW9uZXRpY3M5MQ=="
+  #insightsDbPassword: "cm9vdEBjZW50cmFsMTIzNA=="
+  insightsDbPassword: "root@central1234"

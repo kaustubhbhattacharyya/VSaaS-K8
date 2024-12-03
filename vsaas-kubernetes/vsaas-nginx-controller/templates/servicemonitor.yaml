@@ -1,0 +1,31 @@
+# nginx-controller/templates/servicemonitor.yaml
+{{- if and .Values.controller.metrics.enabled .Values.controller.metrics.service.serviceMonitor.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "nginx.fullname" . }}
+  {{- if .Values.controller.metrics.service.serviceMonitor.namespace }}
+  namespace: {{ .Values.controller.metrics.service.serviceMonitor.namespace }}
+  {{- end }}
+  labels:
+    app.kubernetes.io/name: {{ include "nginx.fullname" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    {{- with .Values.controller.metrics.service.serviceMonitor.additionalLabels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  endpoints:
+    - port: metrics
+      interval: {{ .Values.controller.metrics.service.serviceMonitor.scrapeInterval }}
+      {{- with .Values.controller.metrics.service.serviceMonitor.relabelings }}
+      relabelings:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+  namespaceSelector:
+    matchNames:
+      - {{ .Release.Namespace }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "nginx.fullname" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}

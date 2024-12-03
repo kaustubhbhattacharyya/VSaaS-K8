@@ -1,0 +1,8 @@
+# templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-nginx-config
+data:
+  nginx.conf: {{ .Values.configMap.nginx.conf | quote }}
+  default.conf: {{ .Values.configMap.default.conf | quote }}

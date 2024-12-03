@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-config
+  namespace: {{ .Values.namespace }}
+data:
+  MONGO_STANDALONE_HOSTNAME: {{ .Values.mongodb.hostname | quote }}
+  MONGO_STANDALONE_PORT: {{ .Values.mongodb.port | quote }}
+  MONGO_AUTH_DATABASE: {{ .Values.mongodb.authDatabase | quote }}
+  MONGO_AUTH_USERNAME: {{ .Values.mongodb.username | quote }}
+  MONGO_DATABASE: {{ .Values.mongodb.database | quote }}
+  MONGO_MINCONNECTIONSPERHOST: {{ .Values.mongodb.minConnectionsPerHost | quote }}
+  MONGO_CONNECTIONSPERHOST: {{ .Values.mongodb.connectionsPerHost | quote }}
+  MONGO_CONNECTTIMEOUT: {{ .Values.mongodb.connectTimeout | quote }}
+  MONGO_MAXWAITTIME: {{ .Values.mongodb.maxWaitTime | quote }}
+  MONGO_AUTOCONNECTRETRY: {{ .Values.mongodb.autoConnectRetry | quote }}
+  MONGO_SOCKETTIMEOUT: {{ .Values.mongodb.socketTimeout | quote }}
+  MONGO_THREADSALLOWEDTOBLOCKFORCONNECTIONMULTIPLIER: {{ .Values.mongodb.threadsAllowedToBlockForConnectionMultiplier | quote }}
+  MONGO_SOCKETKEEPALIVE: {{ .Values.mongodb.socketKeepAlive | quote }}
+  MONGO_FSYNC: {{ .Values.mongodb.fsync | quote }}
+  MONGO_WRITECONCERN: {{ .Values.mongodb.writeConcern | quote }}
+  MONGO_READPREFERENCE: {{ .Values.mongodb.readPreference | quote }}
+  REDIS_HOSTNAME: {{ .Values.redis.hostname | quote }}
+  REDIS_PORTNUMBER: {{ .Values.redis.port | quote }}
+  REDIS_SENTINELMASTER: {{ .Values.redis.sentinelMaster | quote }}
+  REDIS_TIMEOUT: {{ .Values.redis.timeout | quote }}
+  REDIS_DBINDEX: {{ .Values.redis.dbIndex | quote }}
+  REDIS_MAXIDLE: {{ .Values.redis.maxIdle | quote }}
+  REDIS_MAXTOTAL: {{ .Values.redis.maxTotal | quote }}
+  REDIS_MINIDLE: {{ .Values.redis.minIdle | quote }}
+  REDIS_LOCK_EXPIREAFTER: {{ .Values.redis.lockExpireAfter | quote }}
+  REDIS_TESTONBORROW: {{ .Values.redis.testOnBorrow | quote }}
+  REDIS_SESSION_TIMEOUT_MINUTES: {{ .Values.redis.sessionTimeoutMinutes | quote }}
+  VTPL_TS_API_SERVER_IP: {{ .Values.webServer.tsApiServerIp | quote }}
+  VTPL_TS_API_SERVER_PORT: {{ .Values.webServer.tsApiServerPort | quote }}
+  VCONNECT_STORAGE_BASE_DIR: {{ .Values.webServer.storageBaseDir | quote }}
+  STREAM_REQUEST_REDIRECT_TO_VMS: {{ .Values.webServer.streamRequestRedirectToVms | quote }}
+  VTPL_RCS_HANDLER_ADDRESS: {{ .Values.webServer.rcsHandlerAddress | quote }}
+  VTPL_WEB_SERVER_CONTEXT: {{ .Values.webServer.context | quote }}
+  VTPL_WEB_APP_NAME: {{ .Values.webServer.appName | quote }}
+  SERVER_PORT: {{ .Values.webServer.port | quote }}

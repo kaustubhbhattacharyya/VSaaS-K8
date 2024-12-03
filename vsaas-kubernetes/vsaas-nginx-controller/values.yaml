@@ -1,0 +1,90 @@
+# nginx-controller/values.yaml
+controller:
+  name: ingress-nginx
+  replicaCount: 1
+  image:
+    repository: registry.k8s.io/ingress-nginx/controller
+    tag: "v1.8.1"
+    pullPolicy: IfNotPresent
+    digest: ""
+
+  hostNetwork: true
+  dnsPolicy: ClusterFirstWithHostNet
+  
+  service:
+    enabled: true
+    type: LoadBalancer
+    ports:
+      http: 80
+      https: 443
+    targetPorts:
+      http: 80
+      https: 443
+    annotations: {}
+    
+  resources:
+    requests:
+      cpu: 100m
+      memory: 90Mi
+    limits:
+      cpu: 800m
+      memory: 600Mi
+
+  config:
+    proxy-connect-timeout: "10"
+    proxy-read-timeout: "120"
+    proxy-send-timeout: "120"
+    keep-alive: "75"
+    keep-alive-requests: "100"
+    upstream-keepalive-timeout: "60"
+
+  probes:
+    initialDelaySeconds: 10
+    periodSeconds: 10
+    timeoutSeconds: 5
+
+  metrics:
+    enabled: true
+    port: 10254
+    service:
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "10254"
+      serviceMonitor:
+        enabled: false
+        additionalLabels:
+          release: prometheus
+        namespace: monitoring
+        scrapeInterval: 30s
+    prometheusRule:
+      enabled: false  # Added this section
+      namespace: monitoring
+      additionalLabels:
+        release: prometheus
+      rules:
+        - alert: NginxIngressControllerHighHttp4xxErrorRate
+          expr: sum(rate(nginx_ingress_controller_requests{status=~"4.."}[1m])) / sum(rate(nginx_ingress_controller_requests[1m])) * 100 > 5
+          for: 1m
+          labels:
+            severity: warning
+          annotations:
+            description: Nginx Ingress Controller is returning 4xx errors
+            summary: High 4xx error rate
+        - alert: NginxIngressControllerHighHttp5xxErrorRate
+          expr: sum(rate(nginx_ingress_controller_requests{status=~"5.."}[1m])) / sum(rate(nginx_ingress_controller_requests[1m])) * 100 > 5
+          for: 1m
+          labels:
+            severity: critical
+          annotations:
+            description: Nginx Ingress Controller is returning 5xx errors
+            summary: High 5xx error rate
+
+grafana:
+  enabled: true
+  dashboards:
+    enabled: true
+    labels:
+      grafana_dashboard: "1"
+
+nameOverride: ""
+fullnameOverride: ""

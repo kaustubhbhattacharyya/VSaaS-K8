@@ -1,0 +1,14 @@
+# test-app/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: test-app-service
+  namespace: test
+spec:
+  selector:
+    app: test-app
+  ports:
+    - protocol: TCP
+      port: 23050
+      targetPort: 23050
+  type: ClusterIP

@@ -1,0 +1,6 @@
+# nginx-controller/Chart.yaml
+apiVersion: v2
+name: nginx-ingress-controller
+description: A Helm chart for Nginx Ingress Controller
+version: 1.0.0
+type: application

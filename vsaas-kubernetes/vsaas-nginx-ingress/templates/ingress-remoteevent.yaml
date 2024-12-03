@@ -1,0 +1,25 @@
+# templates/ingress-remoteevent.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.services.remoteevent.name }}-ingress
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    {{- toYaml .Values.ingress.annotations | nindent 4 }}
+    {{- toYaml .Values.ingress.websocket.annotations | nindent 4 }}
+    {{- if hasKey .Values.services.remoteevent "annotations" }}
+    {{- toYaml .Values.services.remoteevent.annotations | nindent 4 }}
+    {{- end }}
+spec:
+  ingressClassName: {{ .Values.global.ingressClassName }}
+  rules:
+  - host: {{ .Values.global.domain }}
+    http:
+      paths:
+      - path: {{ .Values.services.remoteevent.path }}
+        pathType: {{ .Values.services.remoteevent.pathType }}
+        backend:
+          service:
+            name: {{ .Values.services.remoteevent.name }}
+            port:
+              number: {{ .Values.services.remoteevent.port }}

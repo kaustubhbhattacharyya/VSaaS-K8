@@ -1,0 +1,22 @@
+# templates/ingress-ui.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Release.Name }}-ui
+  annotations:
+    {{- toYaml .Values.ingress.annotations | nindent 4 }}
+spec:
+  ingressClassName: {{ .Values.global.ingressClassName }}
+  rules:
+    - host: {{ .Values.global.domain }}
+      http:
+        paths:
+          {{- range .Values.services.ui.paths }}
+          - path: {{ .path }}
+            pathType: {{ .pathType }}
+            backend:
+              service:
+                name: {{ $.Values.services.ui.name }}
+                port:
+                  number: {{ $.Values.services.ui.port }}
+          {{- end }}

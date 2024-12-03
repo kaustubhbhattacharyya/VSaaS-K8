@@ -1,0 +1,87 @@
+# ----- START OF COMMON SECTION -----
+### Application properties
+default.company.name=Videonetics Technology Private Limited
+default.company.contact=033-6461 0300, support@videonetics.com
+default.company.support=support@videonetics.com
+default.filename.format=dd_MM_yyyy-hh_mm_ss
+default.date.format=dd/MM/yyyy
+default.time.format=hh:mm:ss a
+default.decimal.format=#0.00
+
+# Recommended to 24 hrs, but if no of vms status documents high per hour, then reduce to 2 hrs 
+scheduler.health.report.slice.hrs=6
+# in days
+channelhealth.ondemand.report.max.query.days=30
+
+# in days, max allowed 90 Days, min allowed 10 days
+data.retention.days.log=30
+# in minutes, max allowed 1440 minutes (1 day), min allowed 60 minutes
+data.retention.cleaner.interval=60
+
+config.central.watermark.enabled=false
+
+# MAIL CONFIGURATION
+com.vtpl.mail.send=true
+com.vtpl.mail.server.hostname=127.0.0.1
+com.vtpl.mail.sender.mail.id=videoneticsalert@gmail.com
+com.vtpl.mail.sender.mail.password=videonetics91
+com.vtpl.mail.sender.mail.server=smtp.gmail.com
+com.vtpl.mail.sender.mail.port=465
+
+# ---- END OF COMMON SECTION ----- 
+
+# ----- START OF MASTER SERVER CONFIGURATION SECTION -----
+# hls streaming server details
+#vtpl.ts.api.serverIp=127.0.0.1
+#vtpl.ts.api.serverPort=3002
+
+#central event caching
+#vconnect.storage.base.dir=/media/vdata
+
+#User Session timeout
+redis.session.timeoutinminute=30
+
+stream.request.redirect.to.vms=true
+
+#RCS
+vtpl.rcs.handler.address=127.0.0.1
+
+# ----- END OF MASTER SERVER CONFIGURATION SECTION -----
+
+
+# ----- START OF NOTIFICATION SERVER CONFIGURATION SECTION -----
+
+# in hours
+ns.scheduled.reboot.interval.hrs=3
+
+# 60000 = 1 minute, 1800000 = 30 minute, 86400000 = 1 day
+#ns.siteid.sync.interval=60000
+# 60000 = 1 minute, 1800000 = 30 minute, 86400000 = 1 day
+#ns.nonva.alarm.trigger.interval=60000
+
+#Events Socket Server
+ns.socket.eventserver.hostname=127.0.0.1
+ns.socket.eventserver.port=8077
+
+# in milliseconds, 60000 = 1 minute, 1800000 = 30 minute, 86400000 = 1 day
+ns.site.laodbalance.status.checker.interval.millis=20000
+
+#WebSocket Server
+ns.config.websocket.veem.event=false
+ns.test.event.trigger.interval.millis=0
+
+# in days
+channelhealth.ondemand.report.max.query.days=30
+
+# ----- END OF NOTIFICATION SERVER CONFIGURATION SECTION -----
+
+# ----- START OF not decided SERVER CONFIGURATION SECTION -----
+#Schedular Socket Server
+ns.socket.schedulerserver.hostname=127.0.0.1
+ns.socket.schedulerserver.port=8076
+
+# ----- END OF not decided SERVER CONFIGURATION SECTION -----
+
+#tranzsilica,webrtc
+vtpl.live.streamer=tranzsilica
+vtpl.streaming.port.lsm=8787

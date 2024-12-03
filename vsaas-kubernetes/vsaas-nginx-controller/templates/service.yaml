@@ -1,0 +1,48 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ingress-nginx
+  namespace: ingress-nginx
+  annotations:
+    metallb.universe.tf/ip-allocated-from-pool: first-pool
+spec:
+  type: LoadBalancer
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+      protocol: TCP
+    - name: https
+      port: 443
+      targetPort: 443
+      protocol: TCP
+  selector:
+    app.kubernetes.io/name: ingress-nginx
+    app.kubernetes.io/instance: nginx-controller  # Changed to match pod label
+  externalTrafficPolicy: Cluster
+# # nginx-controller/templates/service.yaml
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: {{ include "nginx.fullname" . }}
+#   labels:
+#     app.kubernetes.io/name: {{ include "nginx.fullname" . }}
+#     app.kubernetes.io/instance: {{ .Release.Name }}
+#   {{- with .Values.controller.service.annotations }}
+#   annotations:
+#     {{- toYaml . | nindent 4 }}
+#   {{- end }}
+# spec:
+#   type: {{ .Values.controller.service.type }}
+#   ports:
+#     - name: http
+#       port: {{ .Values.controller.service.ports.http }}
+#       targetPort: {{ .Values.controller.service.targetPorts.http }}
+#       protocol: TCP
+#     - name: https
+#       port: {{ .Values.controller.service.ports.https }}
+#       targetPort: {{ .Values.controller.service.targetPorts.https }}
+#       protocol: TCP
+#   selector:
+#     app.kubernetes.io/name: {{ include "nginx.fullname" . }}
+#     app.kubernetes.io/instance: {{ .Release.Name }}

@@ -1,0 +1,67 @@
+# values.yaml
+global:
+  domain: soterixcloud-dev.kube.com
+  environment: dev
+  ingressClassName: nginx
+
+services:
+  adminportal:
+    name: vadminportal
+    port: 23000
+    path: /
+    pathType: Prefix
+
+  apiserver:
+    name: master
+    port: 8090
+    path: /v-apiserver
+    pathType: Prefix
+
+  surveillance:
+    name: vsaasweb
+    port: 8041
+    path: /vsaas
+    pathType: Prefix
+
+  notification:
+    name: eventserver
+    port: 8079
+    path: /v-notificationserver
+    pathType: Prefix
+
+  rtc:
+    name: vrtc
+    port: 8083
+    path: /v2
+    pathType: Prefix
+    additionalPaths:
+      - path: /api/v2
+        pathType: Prefix
+
+  ui:
+    name: uvicorn
+    port: 58000
+    paths:
+      - path: /ui
+        pathType: Prefix
+      - path: /api
+        pathType: Prefix
+
+ingress:
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "0"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
+    # Add WebSocket support for notification server
+    nginx.ingress.kubernetes.io/proxy-http-version: "1.1"
+    nginx.ingress.kubernetes.io/proxy-buffering: "off"
+
+  # Specific annotations for WebSocket endpoints
+  websocket:
+    annotations:
+      nginx.ingress.kubernetes.io/proxy-http-version: "1.1"
+      nginx.ingress.kubernetes.io/proxy-buffering: "off"
+      nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+      nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+      nginx.ingress.kubernetes.io/proxy-protocol: "true"
+      nginx.ingress.kubernetes.io/connection-proxy-header: "upgrade"

@@ -1,0 +1,43 @@
+# values.yaml
+image:
+  repository: rabbitmq    # Docker Hub official RabbitMQ image
+  tag: "3.8-management"   # Added quotes to ensure proper parsing
+  pullPolicy: IfNotPresent
+
+replicaCount: 3
+
+rabbitmq:
+  username: guest
+  password: guest
+  adminUsername: admin
+  adminPassword: admin
+
+ingress:
+  enabled: true
+  className: nginx
+  host: soterix-rabbitmq.portal.com
+  path: /
+  pathType: Prefix
+
+service:
+  ports:
+    - name: amqp
+      port: 5672
+      targetPort: 5672
+    - name: http
+      port: 15672
+      targetPort: 15672
+    - name: mqtt
+      port: 1883
+      targetPort: 1883
+    - name: web-mqtt
+      port: 15675
+      targetPort: 15675
+
+resources:
+  requests:
+    memory: "256Mi"
+    cpu: "250m"
+  limits:
+    memory: "512Mi"
+    cpu: "500m"

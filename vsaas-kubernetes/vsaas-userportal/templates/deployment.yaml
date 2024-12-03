@@ -1,0 +1,32 @@
+# templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "vsaas-userportal.fullname" . }}
+  namespace: {{ .Values.namespace.name }}
+spec:
+  replicas: {{ .Values.deployment.replicas }}
+  selector:
+    matchLabels:
+      app: {{ include "vsaas-userportal.name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "vsaas-userportal.name" . }}
+    spec:
+      containers:
+      - name: user-portal
+        image: "{{ .Values.deployment.image.repository }}:{{ .Values.deployment.image.tag }}"
+        imagePullPolicy: {{ .Values.deployment.image.pullPolicy }}
+        envFrom:
+        - configMapRef:
+            name: {{ include "vsaas-userportal.fullname" . }}-config
+        ports:
+        - containerPort: {{ .Values.deployment.containerPort }}
+        volumeMounts:
+        - name: vsaas-userportal-volume
+          mountPath: {{ .Values.deployment.volumeMounts.mountPath }}
+      volumes:
+      - name: vsaas-userportal-volume
+        hostPath:
+          path: {{ .Values.deployment.hostPath.path }}

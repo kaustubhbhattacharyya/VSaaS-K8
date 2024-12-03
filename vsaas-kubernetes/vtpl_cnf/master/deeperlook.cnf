@@ -1,0 +1,7 @@
+#Wed Feb 26 16:39:07 IST 2020
+vtpl.deeperlook.restApiURL=http://dhiraj:dhiraj@10.2.0.3:5000
+vtpl.deeperlook.storageType=vs3
+vtpl.deeperlook.storageURL=http://username:password@10.2.0.3:9983
+vtpl.deeperlook.attributeServerURL=http://username:password@10.2.0.3:1026
+vtpl.deeperlook.commonAPIServerURL=http://apiuser:apiuser@10.2.0.3:7080
+vtpl.deeperlook.frsDefaultConfidence=50

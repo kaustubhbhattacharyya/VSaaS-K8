@@ -1,0 +1,6 @@
+# Chart.yaml
+apiVersion: v2
+name: ingress-config
+description: A Helm chart for managing multiple ingress resources
+version: 0.1.0
+type: application

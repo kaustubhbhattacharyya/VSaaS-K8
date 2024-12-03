@@ -1,0 +1,5 @@
+#Do not change the vtpl.web.server.context this may hamper other service 
+vtpl.web.server.context=v-mail-sms
+vtpl.web.app.name=V-SaaS-Mail-SMS-Sender
+
+server.port=8095

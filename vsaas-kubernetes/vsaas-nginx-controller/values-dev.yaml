@@ -1,0 +1,10 @@
+# nginx-controller/values-dev.yaml
+controller:
+  replicaCount: 3
+  resources:
+    requests:
+      cpu: 100m
+      memory: 90Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi

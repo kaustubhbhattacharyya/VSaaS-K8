@@ -1,0 +1,21 @@
+# templates/ingress-notification.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Release.Name }}-notification
+  annotations:
+    {{- toYaml .Values.ingress.annotations | nindent 4 }}
+    {{- toYaml .Values.ingress.websocket.annotations | nindent 4 }}
+spec:
+  ingressClassName: {{ .Values.global.ingressClassName }}
+  rules:
+    - host: {{ .Values.global.domain }}
+      http:
+        paths:
+          - path: {{ .Values.services.notification.path }}
+            pathType: {{ .Values.services.notification.pathType }}
+            backend:
+              service:
+                name: {{ .Values.services.notification.name }}
+                port:
+                  number: {{ .Values.services.notification.port }}

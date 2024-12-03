@@ -1,0 +1,33 @@
+# templates/ingress-stream-live.yaml
+{{- if and .Values.services.stream.enabled .Values.services.live.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: stream-live-ingress
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    {{- toYaml .Values.ingress.annotations | nindent 4 }}
+    {{- if hasKey .Values.services.stream "annotations" }}
+    {{- toYaml .Values.services.stream.annotations | nindent 4 }}
+    {{- end }}
+spec:
+  ingressClassName: {{ .Values.global.ingressClassName }}
+  rules:
+  - host: {{ .Values.global.domain }}
+    http:
+      paths:
+      - path: {{ .Values.services.stream.path }}
+        pathType: {{ .Values.services.stream.pathType }}
+        backend:
+          service:
+            name: stream-service
+            port:
+              number: 80
+      - path: {{ .Values.services.live.path }}
+        pathType: {{ .Values.services.live.pathType }}
+        backend:
+          service:
+            name: live-service
+            port:
+              number: 80
+{{- end }}

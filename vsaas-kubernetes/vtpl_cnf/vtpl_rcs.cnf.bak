@@ -1,0 +1,30 @@
+#
+#vtpl.rcs.agentId=
+#vtpl.rcs.agentPort=12020
+
+#vtpl.rcs.db.dbType=mysql
+#vtpl.rcs.db.dbType=mssql
+#vtpl.rcs.db.dbType=mongodb_standalone
+#vtpl.rcs.db.dbType=mongodb_replicaset
+#vtpl.rcs.db.driverClassName=com.mysql.jdbc.Driver
+#vtpl.rcs.db.driverClassName=net.sourceforge.jtds.jdbc.Driver
+#vtpl.rcs.db.domain=0.0.0.0
+#vtpl.rcs.db.domain=0.0.0.0:27017,0.0.0.0:27017
+#vtpl.rcs.db.port=3306
+#vtpl.rcs.db.port=1433
+#vtpl.rcs.db.port=27017
+#vtpl.rcs.db.user=root
+#vtpl.rcs.db.password=root
+#vtpl.rcs.db.password=root@central1234
+#vtpl.rcs.db.schema=rcsDb
+#vtpl.rcs.db.schema.auth=admin
+#vtpl.rcs.db.pool.maxWait=10000
+#vtpl.rcs.db.pool.initialSize=100
+#vtpl.rcs.db.pool.maxActive=1000
+#vtpl.rcs.db.connectTimeout=1000
+#vtpl.rcs.db.socketTimeout=1500
+#applicable write concern options for replica set - NONE NORMAL SAFE FSYNC_SAFE JOURNAL_SAFE MAJORITY
+#vtpl.rcs.db.writeConcern=SAFE
+#applicable read preference options - PRIMARY PRIMARY_PREFERRED SECONDARY SECONDARY_PREFERRED NEAREST
+#vtpl.rcs.db.readPreference=NEAREST
+#vtpl.central.pro.db.schema=centralpro

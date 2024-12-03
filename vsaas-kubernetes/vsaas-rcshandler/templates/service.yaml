@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "vsaas-rcshandler.fullname" . }}-svc
+  labels:
+    {{- include "vsaas-rcshandler.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - name: http-rcs
+      port: {{ .Values.service.ports.http.port }}
+      targetPort: {{ .Values.service.ports.http.targetPort }}
+      protocol: {{ .Values.service.ports.http.protocol }}
+    - name: grpc-rcs
+      port: {{ .Values.service.ports.grpc.port }}
+      targetPort: {{ .Values.service.ports.grpc.targetPort }}
+      protocol: {{ .Values.service.ports.grpc.protocol }}
+  selector:
+    {{- include "vsaas-rcshandler.selectorLabels" . | nindent 4 }}

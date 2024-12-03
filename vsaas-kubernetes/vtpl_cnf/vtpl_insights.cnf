@@ -1,0 +1,28 @@
+#INSIGHTS SERVICE DATABASE CONFIG
+
+# DB COMMON CONFIGURATION
+vtpl.insights.db.domain=10.2.0.5
+vtpl.insights.db.user=root
+vtpl.insights.db.password=root@central1234
+vtpl.insights.db.schema.auth=admin
+vtpl.insights.db.dbType=mongodb_standalone
+vtpl.insights.db.writeConcern=SAFE
+vtpl.insights.db.socketTimeout=1500
+vtpl.insights.db.pool.initialSize=100
+vtpl.insights.db.schema=insights
+vtpl.insights.db.readPreference=NEAREST
+vtpl.insights.db.port=27017
+vtpl.insights.db.pool.maxActive=1000
+vtpl.insights.db.pool.maxWait=10000
+vtpl.insights.db.connectTimeout=1000
+vtpl.insights.agentId=1
+vtpl.insights.generate.scrubbing.snap.from.live=true
+
+# DATABASES
+vtpl.insights.insights.db.schema=insights
+vtpl.insights.pva.db.schema=v1
+vtpl.insights.centralpro.db.schema=centralpro
+vtpl.insights.dasdb.db.schema=dasDB
+
+# Insights Config
+vtpl.insights.data.retention=30

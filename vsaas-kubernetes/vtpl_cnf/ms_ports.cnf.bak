@@ -1,0 +1,5 @@
+#Do not change the vtpl.web.server.context this may hamper other service 
+vtpl.web.server.context=v-apiserver
+vtpl.web.app.name=V-Connect-MasterServer
+
+server.port=8090
